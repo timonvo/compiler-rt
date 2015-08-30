@@ -317,7 +317,7 @@ if (NOT WIN32 OR MINGW)
 
       add_compiler_rt_runtime(clang_rt.builtins
                               STATIC
-                              ARCH ${arch}
+                              ARCHS ${arch}
                               ${OS_OPTION}
                               SOURCES ${${arch}_SOURCES}
                               CFLAGS "-std=c99"
