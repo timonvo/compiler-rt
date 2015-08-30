@@ -301,13 +301,13 @@ if(APPLE)
 
   # We're setting the flag manually for each target OS
   set(CMAKE_OSX_DEPLOYMENT_TARGET "")
-  
+
   set(DARWIN_COMMON_CFLAGS -stdlib=libc++)
   set(DARWIN_COMMON_LINKFLAGS
     -stdlib=libc++
     -lc++
     -lc++abi)
-  
+
   set(DARWIN_osx_CFLAGS
     ${DARWIN_COMMON_CFLAGS}
     -mmacosx-version-min=${SANITIZER_MIN_OSX_VERSION})
@@ -323,7 +323,7 @@ if(APPLE)
   # Figure out which arches to use for each OS
   darwin_get_toolchain_supported_archs(toolchain_arches)
   message(STATUS "Toolchain supported arches: ${toolchain_arches}")
-  
+
   if(NOT MACOSX_VERSION_MIN_FLAG)
     darwin_test_archs(osx
       DARWIN_osx_ARCHS
@@ -440,7 +440,7 @@ else()
   set(OS_NAME "${CMAKE_SYSTEM_NAME}")
 endif()
 
-if (SANITIZER_COMMON_SUPPORTED_ARCH AND NOT LLVM_USE_SANITIZER AND
+if (SANITIZER_COMMON_SUPPORTED_ARCH AND LLVM_USE_SANITIZER AND
     (OS_NAME MATCHES "Android|Darwin|Linux|FreeBSD" OR
     (OS_NAME MATCHES "Windows" AND MSVC)))
   set(COMPILER_RT_HAS_SANITIZER_COMMON TRUE)
@@ -492,7 +492,7 @@ else()
 endif()
 
 if (PROFILE_SUPPORTED_ARCH AND
-    OS_NAME MATCHES "Darwin|Linux|FreeBSD")
+    OS_NAME MATCHES "Darwin|Linux|FreeBSD" AND LLVM_USE_PROFILE)
   set(COMPILER_RT_HAS_PROFILE TRUE)
 else()
   set(COMPILER_RT_HAS_PROFILE FALSE)
