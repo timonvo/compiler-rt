@@ -362,7 +362,7 @@ if (APPLE)
   add_subdirectory(Darwin-excludes)
   add_subdirectory(macho_embedded)
   darwin_add_builtin_libraries(${BUILTIN_SUPPORTED_OS})
-elseif (NOT WIN32 OR MINGW)
+else ()
   append_string_if(COMPILER_RT_HAS_STD_C99_FLAG -std=c99 maybe_stdc99)
 
   foreach (arch ${BUILTIN_SUPPORTED_ARCH})
