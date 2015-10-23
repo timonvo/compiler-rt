@@ -25,7 +25,7 @@ endif
 endif
 
 # Filter out stuff that gcc cannot compile (these are only needed for clang-generated code anywasys).
-CommonFunctions_gcc := $(filter-out atomic enable_execute_stack,$(CommonFunctions))
+CommonFunctions_gcc := $(filter-out atomic% enable_execute_stack,$(CommonFunctions))
 
 # Filter out stuff which is not available on specific target
 # For example, sync_fetch_and_add_4 uses Thumb instructions, which are unavailable
