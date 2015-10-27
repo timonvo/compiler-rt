@@ -8,6 +8,15 @@
  * ===----------------------------------------------------------------------===
  */
 #include <pthread.h>
+
+// Rust-specific change
+// One of the headers included by pthread.h in Android #defines si_int to
+// something else. Remove this definition, as we use si_int internally to
+// mean int.
+#ifdef si_int
+#undef si_int
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
