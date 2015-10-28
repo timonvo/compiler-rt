@@ -24,9 +24,13 @@
 #endif
 
 #if defined(__mips__)
+  #include <features.h>
+  // Rust: For some strange reason __USE_MISC isn't being defined so
+  // we don't get the definition of syscall. Force it to be defined.
+  #define __USE_MISC
+  #include <unistd.h>
   #include <sys/cachectl.h>
   #include <sys/syscall.h>
-  #include <unistd.h>
   #if defined(__ANDROID__) && defined(__LP64__)
     /*
      * clear_mips_cache - Invalidates instruction cache for Mips.
