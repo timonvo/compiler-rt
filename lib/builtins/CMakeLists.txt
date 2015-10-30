@@ -363,11 +363,18 @@ else ()
         endif ()
       endforeach ()
 
+      # Rust: don't insert a reference to MSVCRT.lib/etc
+      if (MSVC)
+        set(_cflags -Zl)
+      else ()
+        set(_cflags -std=c99)
+      endif ()
+
       add_compiler_rt_runtime(clang_rt.builtins
                               STATIC
                               ARCHS ${arch}
                               SOURCES ${${arch}_SOURCES}
-                              CFLAGS "-std=c99"
+                              CFLAGS ${_cflags}
                               PARENT_TARGET builtins)
     endif ()
   endforeach ()
