@@ -374,7 +374,7 @@ if (APPLE)
   add_subdirectory(macho_embedded)
   darwin_add_builtin_libraries(${BUILTIN_SUPPORTED_OS})
 else ()
-  append_string_if(COMPILER_RT_HAS_STD_C99_FLAG -std=c99 maybe_stdc99)
+  append_string_if(COMPILER_RT_HAS_STD_C99_FLAG -std=c99 _cflags)
 
   foreach (arch ${BUILTIN_SUPPORTED_ARCH})
     if (CAN_TARGET_${arch})
@@ -389,11 +389,14 @@ else ()
         endif ()
       endforeach ()
 
+      # Rust: don't insert a reference to MSVCRT.lib/etc
+      append_string_if(MSVC -Zl _cflags)
+
       add_compiler_rt_runtime(clang_rt.builtins
                               STATIC
                               ARCHS ${arch}
                               SOURCES ${${arch}_SOURCES}
-                              CFLAGS ${maybe_stdc99}
+                              CFLAGS ${_cflags}
                               PARENT_TARGET builtins)
     endif ()
   endforeach ()
