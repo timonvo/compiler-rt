@@ -60,6 +60,12 @@ ifneq (,$(findstring mips,$(TargetTriple)))
     CommonDisabledFunctions := emutls
 endif
 
+# Disable emutls on Windows
+# emutls works on POSIX only as it uses pthreads
+ifneq (,$(findstring windows,$(TargetTriple)))
+    CommonDisabledFunctions := emutls
+endif
+
 # Clear cache is builtin on aarch64-apple-ios
 # arm64 and aarch64 are synonims, but iOS targets usually use arm64 (history reasons)
 ifeq (aarch64-apple-ios,$(subst arm64,aarch64,$(TargetTriple)))
