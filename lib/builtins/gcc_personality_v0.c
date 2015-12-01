@@ -131,6 +131,22 @@ static uintptr_t readEncodedPointer(const uint8_t** data, uint8_t encoding)
     return result;
 }
 
+#if defined(__arm__) && !defined(__USING_SJLJ_EXCEPTIONS__) && \
+     !defined(__ARM_DWARF_EH__)
+#define USING_ARM_EHABI 1
+/*
+ * On ARM EHABI the personality routine is responsible for actually unwinding
+ * a single stack frame before returning (ARM EHABI Sec. 6.1).
+ */
+static inline _Unwind_Reason armEHABIUnwind(
+        struct _Unwind_Exception* exceptionObject,
+        struct _Unwind_Context *context) {
+    if (__gnu_unwind_frame(exceptionObject, context) != _URC_OK) {
+        return _URC_FAILURE;
+    }
+    return _URC_CONTINUE_UNWIND;
+}
+#endif
 
 /*
  * The C compiler makes references to __gcc_personality_v0 in
@@ -146,6 +162,12 @@ COMPILER_RT_ABI _Unwind_Reason_Code
 __gcc_personality_sj0(int version, _Unwind_Action actions,
          uint64_t exceptionClass, struct _Unwind_Exception* exceptionObject,
          struct _Unwind_Context *context)
+#elif USING_ARM_EHABI
+/* The ARM EHABI personality routine has a different signature. */
+COMPILER_RT_ABI _Unwind_Reason_Code
+__gcc_personality_v0(_Unwind_State state,
+         struct _Unwind_Exception* exceptionObject,
+         struct _Unwind_Context *context)
 #else
 COMPILER_RT_ABI _Unwind_Reason_Code
 __gcc_personality_v0(int version, _Unwind_Action actions,
@@ -155,13 +177,22 @@ __gcc_personality_v0(int version, _Unwind_Action actions,
 {
     /* Since C does not have catch clauses, there is nothing to do during */
     /* phase 1 (the search phase). */
+#if USING_ARM_EHABI
+    if ( (state & _US_ACTION_MASK) == _US_VIRTUAL_UNWIND_FRAME )
+        return armEHABIUnwind(exceptionObject, context);
+#else
     if ( actions & _UA_SEARCH_PHASE ) 
         return _URC_CONTINUE_UNWIND;
-        
+#endif
+
     /* There is nothing to do if there is no LSDA for this frame. */
     const uint8_t* lsda = (uint8_t*)_Unwind_GetLanguageSpecificData(context);
     if ( lsda == (uint8_t*) 0 )
+#if USING_ARM_EHABI
+        return armEHABIUnwind(exceptionObject, context);
+#else
         return _URC_CONTINUE_UNWIND;
+#endif
 
     uintptr_t pc = _Unwind_GetIP(context)-1;
 
@@ -226,7 +257,11 @@ __gcc_personality_v0(int version, _Unwind_Action actions,
 #endif // SJ/LJ
 
     if (resumeIp == 0) {
+#if USING_ARM_EHABI
+        return armEHABIUnwind(exceptionObject, context);
+#else
         return _URC_CONTINUE_UNWIND;
+#endif
     } else {
         _Unwind_SetGR(context, __builtin_eh_return_data_regno(0),
                       (uintptr_t)exceptionObject);
