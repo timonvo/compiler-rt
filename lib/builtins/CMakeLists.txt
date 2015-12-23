@@ -155,9 +155,11 @@ if(APPLE)
 endif()
 
 if(NOT WIN32 OR MINGW)
-  set(GENERIC_SOURCES
-      ${GENERIC_SOURCES}
-      emutls.c)
+  if (COMPILER_RT_BUILD_EMUTLS)
+    set(GENERIC_SOURCES
+        ${GENERIC_SOURCES}
+        emutls.c)
+  endif()
 endif()
 
 if (HAVE_UNWIND_H)
