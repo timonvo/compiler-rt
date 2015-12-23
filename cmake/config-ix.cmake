@@ -90,8 +90,8 @@ set(COMPILER_RT_SUPPORTED_ARCH)
 # platform. We use the results of these tests to build only the various target
 # runtime libraries supported by our current compilers cross-compiling
 # abilities.
-set(SIMPLE_SOURCE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/simple.cc)
-file(WRITE ${SIMPLE_SOURCE} "#include <stdlib.h>\n#include <limits>\nint main() {}\n")
+set(SIMPLE_SOURCE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/simple.c)
+file(WRITE ${SIMPLE_SOURCE} "#include <stdlib.h>\n#include <limits.h>\nint main() {}\n")
 
 function(check_compile_definition def argstring out_var)
   if("${def}" STREQUAL "")
