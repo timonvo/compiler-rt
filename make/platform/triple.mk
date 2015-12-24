@@ -19,6 +19,8 @@ ifeq ($(Arch),i686)
 else ifeq ($(Arch),arm)
 ifneq (,$(findstring ios,$(TargetTriple)))
 	Arch := armv7
+else ifneq (,$(findstring musleabi,$(TargetTriple)))
+	Arch := armv7
 else ifneq (,$(findstring android,$(TargetTriple)))
 	Arch := armv7
 endif
