@@ -350,6 +350,7 @@ set(armhf_SOURCES
   arm/unorddf2vfp.S
   arm/unordsf2vfp.S
   ${arm_SOURCES})
+set(armv6_SOURCES ${arm_SOURCES})
 set(armv7_SOURCES ${arm_SOURCES})
 set(armv7s_SOURCES ${arm_SOURCES})
 set(armv7k_SOURCES ${arm_SOURCES})

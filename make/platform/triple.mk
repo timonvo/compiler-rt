@@ -19,7 +19,9 @@ ifeq ($(Arch),i686)
 else ifeq ($(Arch),arm)
 ifneq (,$(findstring ios,$(TargetTriple)))
 	Arch := armv7
-else ifneq (,$(findstring musleabi,$(TargetTriple)))
+else ifneq (,$(findstring arm-unknown-linux-musleabi,$(TargetTriple)))
+	Arch := armv6
+else ifneq (,$(findstring armv7-unknown-linux-musleabi,$(TargetTriple)))
 	Arch := armv7
 else ifneq (,$(findstring android,$(TargetTriple)))
 	Arch := armv7
@@ -29,10 +31,11 @@ endif
 # Filter out stuff that gcc cannot compile (these are only needed for clang-generated code anywasys).
 CommonFunctions_gcc := $(filter-out atomic% enable_execute_stack,$(CommonFunctions))
 
-# Filter out stuff which is not available on specific target
-# For example, sync_fetch_and_add_4 uses Thumb instructions, which are unavailable
-# when building for arm-linux-androideabi
-ifeq ($(TargetTriple),arm-linux-androideabi)
+# Filter out stuff which is not available on specific targets.
+# For example, sync_fetch_and_add_4 uses Thumb instructions that are only
+# available on armv7-a and up, i.e. not on arm-linux-androideabi or
+# arm-unknown-linux-musleabi.
+ifeq ($(TargetTriple),$(filter $(TargetTriple), arm-linux-androideabi arm-unknown-linux-musleabi arm-unknown-linux-musleabihf))
     ArchDisabledFunctions := \
                 sync_fetch_and_add_4 \
                 sync_fetch_and_sub_4 \
@@ -54,6 +57,48 @@ ifeq ($(TargetTriple),arm-linux-androideabi)
                 sync_fetch_and_umax_8 \
                 sync_fetch_and_min_8 \
                 sync_fetch_and_umin_8
+endif
+
+# Filter out those builtins that rely on hardware float support (VFP) on
+# targets that don't support it.
+ifeq ($(TargetTriple),arm-unknown-linux-musleabi)
+    ArchDisabledFunctions := $(ArchDisabledFunctions) \
+                adddf3vfp \
+                addsf3vfp \
+                divdf3vfp \
+                divsf3vfp \
+                eqdf2vfp \
+                eqsf2vfp \
+                extendsfdf2vfp \
+                fixdfsivfp \
+                fixsfsivfp \
+                fixunsdfsivfp \
+                fixunssfsivfp \
+                floatsidfvfp \
+                floatsisfvfp \
+                floatunssidfvfp \
+                floatunssisfvfp \
+                gedf2vfp \
+                gesf2vfp \
+                gtdf2vfp \
+                gtsf2vfp \
+                ledf2vfp \
+                lesf2vfp \
+                ltdf2vfp \
+                ltsf2vfp \
+                muldf3vfp \
+                mulsf3vfp \
+                nedf2vfp \
+                negdf2vfp \
+                negsf2vfp \
+                nesf2vfp \
+                restore_vfp_d8_d15_regs \
+                save_vfp_d8_d15_regs \
+                subdf3vfp \
+                subsf3vfp \
+                truncdfsf2vfp \
+                unorddf2vfp \
+                unordsf2vfp
 endif
 
 # Disable emutls on MIPS
