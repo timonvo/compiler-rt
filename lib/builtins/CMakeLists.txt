@@ -259,27 +259,6 @@ set(arm_SOURCES
   arm/switch32.S
   arm/switch8.S
   arm/switchu8.S
-  arm/sync_fetch_and_add_4.S
-  arm/sync_fetch_and_add_8.S
-  arm/sync_fetch_and_and_4.S
-  arm/sync_fetch_and_and_8.S
-  arm/sync_fetch_and_max_4.S
-  arm/sync_fetch_and_max_8.S
-  arm/sync_fetch_and_min_4.S
-  arm/sync_fetch_and_min_8.S
-  arm/sync_fetch_and_nand_4.S
-  arm/sync_fetch_and_nand_8.S
-  arm/sync_fetch_and_or_4.S
-  arm/sync_fetch_and_or_8.S
-  arm/sync_fetch_and_sub_4.S
-  arm/sync_fetch_and_sub_8.S
-  arm/sync_fetch_and_umax_4.S
-  arm/sync_fetch_and_umax_8.S
-  arm/sync_fetch_and_umin_4.S
-  arm/sync_fetch_and_umin_8.S
-  arm/sync_fetch_and_xor_4.S
-  arm/sync_fetch_and_xor_8.S
-  arm/sync_synchronize.S
   arm/udivmodsi4.S
   arm/udivsi3.S
   arm/umodsi3.S
@@ -303,6 +282,29 @@ set(aarch64_SOURCES
   trunctfdf2.c
   trunctfsf2.c
   ${GENERIC_SOURCES})
+
+set(armthumb_SOURCES
+  arm/sync_fetch_and_add_4.S
+  arm/sync_fetch_and_add_8.S
+  arm/sync_fetch_and_and_4.S
+  arm/sync_fetch_and_and_8.S
+  arm/sync_fetch_and_max_4.S
+  arm/sync_fetch_and_max_8.S
+  arm/sync_fetch_and_min_4.S
+  arm/sync_fetch_and_min_8.S
+  arm/sync_fetch_and_nand_4.S
+  arm/sync_fetch_and_nand_8.S
+  arm/sync_fetch_and_or_4.S
+  arm/sync_fetch_and_or_8.S
+  arm/sync_fetch_and_sub_4.S
+  arm/sync_fetch_and_sub_8.S
+  arm/sync_fetch_and_umax_4.S
+  arm/sync_fetch_and_umax_8.S
+  arm/sync_fetch_and_umin_4.S
+  arm/sync_fetch_and_umin_8.S
+  arm/sync_fetch_and_xor_4.S
+  arm/sync_fetch_and_xor_8.S
+  arm/sync_synchronize.S)
 
 set(armhf_SOURCES
   arm/adddf3vfp.S
@@ -338,17 +340,17 @@ set(armhf_SOURCES
   arm/subsf3vfp.S
   arm/truncdfsf2vfp.S
   arm/unorddf2vfp.S
-  arm/unordsf2vfp.S
-  ${arm_SOURCES})
+  arm/unordsf2vfp.S)
 set(armv6_SOURCES ${arm_SOURCES})
-set(armv7_SOURCES ${arm_SOURCES})
-set(armv7s_SOURCES ${arm_SOURCES})
+set(armv6hf_SOURCES ${arm_SOURCES} ${armhf_SOURCES})
+set(armv7_SOURCES ${arm_SOURCES} ${armhf_SOURCES} ${armthumb_SOURCES})
+set(armv7s_SOURCES ${arm_SOURCES} ${armhf_SOURCES} ${armthumb_SOURCES})
 set(arm64_SOURCES ${aarch64_SOURCES})
 
 # macho_embedded archs
 set(armv6m_SOURCES ${GENERIC_SOURCES})
-set(armv7m_SOURCES ${arm_SOURCES})
-set(armv7em_SOURCES ${arm_SOURCES})
+set(armv7m_SOURCES ${arm_SOURCES} ${armhf_SOURCES} ${armthumb_SOURCES})
+set(armv7em_SOURCES ${arm_SOURCES} ${armhf_SOURCES} ${armthumb_SOURCES})
 
 set(mips_SOURCES ${GENERIC_SOURCES})
 set(mipsel_SOURCES ${mips_SOURCES})
